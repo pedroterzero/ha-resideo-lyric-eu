@@ -4,8 +4,9 @@ Controls a Honeywell Home / Resideo **T6** thermostat on the EMEA cloud
 ("Honeywell Home" app, CHIL backend at `lyric.alarmnet.com`) with the
 same email and password you use in the app. No Resideo developer API key.
 
-Written for and tested on one T6 (heat only, display unit Celsius). Other
-CHIL thermostats may work but are untested.
+**Tested on:** one T6 (heat only, EMEA account, display unit Celsius) with
+Home Assistant 2026.9. Other CHIL thermostats, Fahrenheit setups and cooling
+may work but are untested. Provided as-is; issues and pull requests welcome.
 
 ## What you get
 
@@ -44,9 +45,15 @@ data:
 
 ## Install
 
-Copy this directory to `config/custom_components/resideo_lyric_eu/`, restart
-Home Assistant, then *Settings → Devices & services → Add integration →
-Resideo Lyric EU* and sign in with your Honeywell Home account.
+**HACS:** *HACS → ⋮ → Custom repositories*, add
+`https://github.com/pedroterzero/ha-resideo-lyric-eu` as type *Integration*,
+install **Resideo Lyric EU**, and restart Home Assistant.
+
+**Manually:** copy `custom_components/resideo_lyric_eu/` into your
+`config/custom_components/` and restart Home Assistant.
+
+Then *Settings → Devices & services → Add integration → Resideo Lyric EU* and
+sign in with your Honeywell Home account.
 
 Only the email and an OAuth **refresh token** are stored, never the
 password. The token is valid for 90 days and renewed on every use; if it
@@ -93,15 +100,20 @@ These were all observed on a real T6:
 | Schedule write | `PUT api/v3/locations/{loc}/ThermostatSchedule` (EMEA rejects `periodType`) |
 | Holiday | `PUT api/v2/locations/{loc}/vacationHold` |
 
-`api.py` has no Home Assistant imports and can be used on its own.
+`custom_components/resideo_lyric_eu/api.py` has no Home Assistant imports and
+can be used on its own.
 
 ## Tests
 
-Offline unit tests for the conversions and request bodies:
+Offline unit tests for the conversions and request bodies (from the repo root):
 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
+
+## License
+
+MIT, see [LICENSE](LICENSE).
 
 ## Disclaimer
 

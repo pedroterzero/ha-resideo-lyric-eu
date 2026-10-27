@@ -1,9 +1,7 @@
 """Offline tests for the standalone CHIL client helpers (no network, no HA).
 
-Run:  python3 -m unittest discover -s tests   (needs aiohttp importable)
-      or inside the HA container:
-      docker exec -w /config/custom_components/resideo_lyric_eu home-assistant \
-          python3 -m unittest discover -s tests -v
+Run from the repo root (needs aiohttp importable):
+      python3 -m unittest discover -s tests -v
 """
 
 from datetime import UTC, datetime, timedelta
@@ -12,7 +10,7 @@ from pathlib import Path
 import unittest
 
 _spec = importlib.util.spec_from_file_location(
-    "resideo_api", Path(__file__).resolve().parent.parent / "api.py"
+    "resideo_api", Path(__file__).resolve().parent.parent / "custom_components" / "resideo_lyric_eu" / "api.py"
 )
 api = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(api)

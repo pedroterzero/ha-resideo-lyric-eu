@@ -1,11 +1,14 @@
 {
   "domain": "resideo_lyric_eu",
   "name": "Resideo Lyric EU (Honeywell Home EMEA)",
-  "codeowners": [],
+  "codeowners": [
+    "@pedroterzero"
+  ],
   "config_flow": true,
-  "documentation": "https://github.com/home-assistant/core",
+  "documentation": "https://github.com/pedroterzero/ha-resideo-lyric-eu",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/pedroterzero/ha-resideo-lyric-eu/issues",
   "requirements": [],
   "version": "0.2.0"
 }
