@@ -331,7 +331,9 @@ class ResideoClient:
             if status == 401:
                 raise ResideoAuthError(f"{method} {path}: 401 after token refresh")
             if status >= 500:
-                raise ResideoConnectionError(f"{method} {path}: HTTP {status} {text[:300]}")
+                raise ResideoConnectionError(
+                    f"{method} {path}: HTTP {status} {text[:300]}"
+                )
             if status >= 400:
                 raise ResideoApiError(status, text)
             if not text:
@@ -405,14 +407,19 @@ class ResideoClient:
         )
 
     async def async_get_schedule(self, dev: Thermostat) -> dict[str, Any]:
-        """Timed schedule: {scheduleType, scheduleSubType, timedSchedule:{days:[
-        {day, periods:[{periodType, startTime "HH:MM:SS", heatSetPoint (native)}]}]}}."""
+        """Timed schedule.
+
+        {scheduleType, scheduleSubType, timedSchedule: {days: [{day, periods: [
+        {periodType, startTime "HH:MM:SS", heatSetPoint (native)}]}]}}
+        """
         return await self.request(
             "GET",
             f"api/v4/locations/{dev.location_id}/devices/{dev.device_id}/Schedule",
         )
 
-    async def async_set_schedule(self, dev: Thermostat, schedule: dict[str, Any]) -> Any:
+    async def async_set_schedule(
+        self, dev: Thermostat, schedule: dict[str, Any]
+    ) -> Any:
         """PUT a full timed schedule, same shape as async_get_schedule returns.
 
         EMEA schedules reject periodType/isCancelled (HTTP 400), though GET
@@ -422,7 +429,11 @@ class ResideoClient:
             {
                 "day": day["day"],
                 "periods": [
-                    {k: v for k, v in period.items() if k not in ("periodType", "isCancelled")}
+                    {
+                        k: v
+                        for k, v in period.items()
+                        if k not in ("periodType", "isCancelled")
+                    }
                     for period in day.get("periods", [])
                 ],
             }
@@ -518,7 +529,11 @@ class Thermostat:
 
     @property
     def name(self) -> str:
-        return self.raw.get("userDefinedDeviceName") or self.raw.get("name") or self.device_id
+        return (
+            self.raw.get("userDefinedDeviceName")
+            or self.raw.get("name")
+            or self.device_id
+        )
 
     @property
     def _tstat(self) -> dict[str, Any]:
@@ -620,7 +635,7 @@ class Thermostat:
 
     @property
     def schedule_paused(self) -> bool:
-        """Schedule paused on the device (scheduleStatus Pause; running reads Resume)."""
+        """Schedule paused on the device (scheduleStatus Pause; running: Resume)."""
         return self.schedule_status == "Pause"
 
     @property
@@ -688,12 +703,24 @@ def thermostats(locations: list[dict[str, Any]]) -> dict[str, Thermostat]:
     return out
 
 
-WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+WEEKDAYS = (
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+)
 
 
-def schedule_days(dev: Thermostat, schedule: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+def schedule_days(
+    dev: Thermostat, schedule: dict[str, Any]
+) -> dict[str, list[dict[str, Any]]]:
     """Timed schedule as {"monday": [{"start": "HH:MM", "temperature": °}], ...}."""
-    by_day = {d.get("day"): d.get("periods") or [] for d in schedule["timedSchedule"]["days"]}
+    by_day = {
+        d.get("day"): d.get("periods") or [] for d in schedule["timedSchedule"]["days"]
+    }
     return {
         day.lower(): [
             {
@@ -740,4 +767,7 @@ def schedule_with_days(
                 ],
             }
         )
-    return {**schedule, "timedSchedule": {**schedule["timedSchedule"], "days": out_days}}
+    return {
+        **schedule,
+        "timedSchedule": {**schedule["timedSchedule"], "days": out_days},
+    }

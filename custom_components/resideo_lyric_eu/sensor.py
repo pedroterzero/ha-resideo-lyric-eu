@@ -43,7 +43,13 @@ def _setpoint_status(dev: Thermostat) -> str | None:
 
 def _hold_attrs(dev: Thermostat) -> dict[str, Any]:
     # Anything beyond the core changeable values (e.g. a hold-until time).
-    core = {"mode", "heatSetpoint", "coolSetpoint", "thermostatSetpointStatus", "heatCoolMode"}
+    core = {
+        "mode",
+        "heatSetpoint",
+        "coolSetpoint",
+        "thermostatSetpointStatus",
+        "heatCoolMode",
+    }
     return {
         "raw_status": dev.setpoint_status,
         **{k: v for k, v in dev.changeable.items() if k not in core},
@@ -142,7 +148,9 @@ async def async_setup_entry(
 class ResideoSensor(ResideoEntity, SensorEntity):
     entity_description: ResideoSensorDescription
 
-    def __init__(self, coordinator, device_id: str, description: ResideoSensorDescription) -> None:
+    def __init__(
+        self, coordinator, device_id: str, description: ResideoSensorDescription
+    ) -> None:
         super().__init__(coordinator, device_id, description.key)
         self.entity_description = description
 

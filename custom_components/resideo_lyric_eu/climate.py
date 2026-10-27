@@ -142,8 +142,10 @@ class ResideoClimate(ResideoEntity, ClimateEntity):
         status = dev.setpoint_status or ""
         # Seen live: the T6 turns a TemporaryHold into HoldUntil the next
         # schedule period within seconds.
-        if status == "HoldUntil" and (until := dev.changeable.get("holdUntil")) and (
-            until == dev.changeable.get("nextPeriodTime")
+        if (
+            status == "HoldUntil"
+            and (until := dev.changeable.get("holdUntil"))
+            and (until == dev.changeable.get("nextPeriodTime"))
         ):
             return PRESET_TEMPORARY
         return STATUS_TO_PRESET.get(status)
@@ -219,7 +221,9 @@ class ResideoClimate(ResideoEntity, ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         mode = HVAC_MODES_TO_CHIL.get(hvac_mode)
         if mode not in self.device.allowed_modes:
-            raise ServiceValidationError(f"Mode {hvac_mode} not supported by the thermostat")
+            raise ServiceValidationError(
+                f"Mode {hvac_mode} not supported by the thermostat"
+            )
         await self.coordinator.async_write(
             self.coordinator.client.async_set_mode(self.device, mode)
         )
@@ -247,7 +251,9 @@ class ResideoClimate(ResideoEntity, ClimateEntity):
             setpoint = self.target_temperature
             if setpoint is None:
                 raise ServiceValidationError("No current setpoint to hold")
-            status = "TemporaryHold" if preset_mode == PRESET_TEMPORARY else "PermanentHold"
+            status = (
+                "TemporaryHold" if preset_mode == PRESET_TEMPORARY else "PermanentHold"
+            )
             await self.coordinator.async_write(
                 client.async_set_heat_setpoint(dev, status, setpoint)
             )
@@ -290,7 +296,9 @@ class ResideoClimate(ResideoEntity, ClimateEntity):
         end_utc = dt_util.as_utc(end)
         start_utc, end_utc = self._round_time(start_utc), self._round_time(end_utc)
         if end_utc <= max(start_utc, dt_util.utcnow()):
-            raise ServiceValidationError("Holiday end must be after its start and in the future")
+            raise ServiceValidationError(
+                "Holiday end must be after its start and in the future"
+            )
         value = self._check_setpoint(temperature)
         await self.coordinator.async_write(
             self.coordinator.client.async_set_holiday(
@@ -314,7 +322,9 @@ class ResideoClimate(ResideoEntity, ClimateEntity):
         return schedule
 
     async def async_service_get_schedule(self) -> dict[str, Any]:
-        return {"schedule": schedule_days(self.device, await self._async_read_schedule())}
+        return {
+            "schedule": schedule_days(self.device, await self._async_read_schedule())
+        }
 
     async def async_service_set_schedule(
         self, schedule: dict[str, list[dict[str, Any]]]
@@ -325,14 +335,19 @@ class ResideoClimate(ResideoEntity, ClimateEntity):
         for day, periods in schedule.items():
             starts = [p["start"] for p in periods]
             if starts != sorted(set(starts)):
-                raise ServiceValidationError(f"{day}: start times must be increasing and unique")
+                raise ServiceValidationError(
+                    f"{day}: start times must be increasing and unique"
+                )
             for start in starts:
                 if start.minute % increment or start.second:
                     raise ServiceValidationError(
                         f"{day}: {start:%H:%M} is not a multiple of {increment} minutes"
                     )
             days[day] = [
-                {"start": p["start"].strftime("%H:%M"), "temperature": self._check_setpoint(p["temperature"])}
+                {
+                    "start": p["start"].strftime("%H:%M"),
+                    "temperature": self._check_setpoint(p["temperature"]),
+                }
                 for p in periods
             ]
         current = await self._async_read_schedule()

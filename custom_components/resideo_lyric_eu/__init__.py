@@ -31,7 +31,10 @@ PERIOD_SCHEMA = vol.Schema(
     {vol.Required("start"): cv.time, vol.Required("temperature"): vol.Coerce(float)}
 )
 SCHEDULE_SCHEMA = vol.Schema(
-    {vol.Optional(day.lower()): vol.All(cv.ensure_list, [PERIOD_SCHEMA]) for day in WEEKDAYS}
+    {
+        vol.Optional(day.lower()): vol.All(cv.ensure_list, [PERIOD_SCHEMA])
+        for day in WEEKDAYS
+    }
 )
 
 

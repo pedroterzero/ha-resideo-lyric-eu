@@ -10,7 +10,11 @@ from pathlib import Path
 import unittest
 
 _spec = importlib.util.spec_from_file_location(
-    "resideo_api", Path(__file__).resolve().parent.parent / "custom_components" / "resideo_lyric_eu" / "api.py"
+    "resideo_api",
+    Path(__file__).resolve().parent.parent
+    / "custom_components"
+    / "resideo_lyric_eu"
+    / "api.py",
 )
 api = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(api)
@@ -143,7 +147,9 @@ class ScheduleTest(unittest.TestCase):
             [{"startTime": "08:00:00", "heatSetPoint": 68.0, "coolSetPoint": 50.0}],
         )
         self.assertEqual(by_day["Monday"], [])
-        self.assertEqual(by_day["Tuesday"], SCHEDULE["timedSchedule"]["days"][1]["periods"])
+        self.assertEqual(
+            by_day["Tuesday"], SCHEDULE["timedSchedule"]["days"][1]["periods"]
+        )
         # the input is not modified
         self.assertEqual(len(SCHEDULE["timedSchedule"]["days"][0]["periods"]), 1)
 

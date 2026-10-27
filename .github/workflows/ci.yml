@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # weekly, to catch Home Assistant / HACS validation changes
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install ruff
+      - run: ruff check --output-format=github .
+      - run: ruff format --check .
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install aiohttp
+      - run: python -m unittest discover -s tests -v
+
+  import:
+    name: import with Home Assistant
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - run: pip install "homeassistant==2026.9.*"
+      - name: Import every module
+        run: |
+          python - <<'EOF'
+          import importlib, pathlib
+          pkg = pathlib.Path("custom_components/resideo_lyric_eu")
+          for f in sorted(pkg.glob("*.py")):
+              name = "custom_components.resideo_lyric_eu" + (
+                  "" if f.stem == "__init__" else f".{f.stem}"
+              )
+              importlib.import_module(name)
+              print("ok", name)
+          EOF
+
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: integration
+          # not in home-assistant/brands (custom integration)
+          ignore: brands

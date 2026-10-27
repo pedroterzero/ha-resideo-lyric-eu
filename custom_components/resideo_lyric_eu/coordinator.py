@@ -60,7 +60,9 @@ class ResideoCoordinator(DataUpdateCoordinator[dict[str, Thermostat]]):
             self.config_entry.async_start_reauth(self.hass)
             raise HomeAssistantError(f"Honeywell Home sign-in expired: {err}") from err
         except ResideoError as err:
-            raise HomeAssistantError(f"Honeywell Home rejected the change: {err}") from err
+            raise HomeAssistantError(
+                f"Honeywell Home rejected the change: {err}"
+            ) from err
         if schedule:
             self._schedules_at = None
         await self.async_refresh()

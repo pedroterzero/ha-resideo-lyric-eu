@@ -1,5 +1,7 @@
 # Resideo Lyric EU (Home Assistant custom integration)
 
+[![CI](https://github.com/pedroterzero/ha-resideo-lyric-eu/actions/workflows/ci.yml/badge.svg)](https://github.com/pedroterzero/ha-resideo-lyric-eu/actions/workflows/ci.yml)
+
 Controls a Honeywell Home / Resideo **T6** thermostat on the EMEA cloud
 ("Honeywell Home" app, CHIL backend at `lyric.alarmnet.com`) with the
 same email and password you use in the app. No Resideo developer API key.
@@ -105,7 +107,9 @@ can be used on its own.
 
 ## Tests
 
-Offline unit tests for the conversions and request bodies (from the repo root):
+Offline unit tests for the conversions and request bodies (from the repo root).
+CI also runs ruff, an import check against Home Assistant, hassfest and the
+HACS validation:
 
 ```sh
 python3 -m unittest discover -s tests -v
