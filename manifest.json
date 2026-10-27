@@ -1,0 +1,11 @@
+{
+  "domain": "resideo_lyric_eu",
+  "name": "Resideo Lyric EU (Honeywell Home EMEA)",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/home-assistant/core",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "0.1.0"
+}

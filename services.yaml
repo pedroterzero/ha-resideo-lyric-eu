@@ -1,0 +1,59 @@
+set_hold:
+  target:
+    entity:
+      integration: resideo_lyric_eu
+      domain: climate
+  fields:
+    temperature:
+      selector:
+        number:
+          min: 5
+          max: 35
+          step: 0.5
+          unit_of_measurement: "°C"
+    until:
+      selector:
+        time:
+set_holiday:
+  target:
+    entity:
+      integration: resideo_lyric_eu
+      domain: climate
+  fields:
+    start:
+      selector:
+        datetime:
+    end:
+      required: true
+      selector:
+        datetime:
+    temperature:
+      required: true
+      default: 16
+      selector:
+        number:
+          min: 5
+          max: 35
+          step: 0.5
+          unit_of_measurement: "°C"
+cancel_holiday:
+  target:
+    entity:
+      integration: resideo_lyric_eu
+      domain: climate
+get_schedule:
+  target:
+    entity:
+      integration: resideo_lyric_eu
+      domain: climate
+set_schedule:
+  target:
+    entity:
+      integration: resideo_lyric_eu
+      domain: climate
+  fields:
+    schedule:
+      required: true
+      example: '{"monday": [{"start": "07:00", "temperature": 21}, {"start": "22:00", "temperature": 16}]}'
+      selector:
+        object:
